@@ -1,3 +1,4 @@
+
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <header class="header">
     <nav class="navbar">
@@ -6,16 +7,16 @@
             <div class="nav-brand">
                 <a href="{{ route('home') }}" class="brand-link">
                     <i class="fas fa-blog brand-icon"></i>
-                    <span class="brand-text">Мой Блог</span>
+                    <span class="brand-text">Catsbook</span>
                 </a>
             </div>
 
             <!-- Навигация -->
             <div class="nav-menu">
-                <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">
+                <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') }}">
                     <i class="fas fa-home"></i> <span>Главная</span>
                 </a>
-                <a href="{{ route('posts') }}" class="nav-link {{ request()->routeIs('posts.*') && !request()->routeIs('posts.create') ? 'active' : '' }}">
+                <a href="{{ route('posts') }}" class="nav-link {{ request()->routeIs('posts.*') && !request()->routeIs('posts.create') }}">
                     <i class="fas fa-book-reader"></i> <span>Посты</span>
                 </a>
             </div>
@@ -24,9 +25,7 @@
             <div class="nav-actions">
                 @auth("web")
                     <div class="nav-buttons">
-                        <a href="{{ route('posts.create') }}" class="btn btn-outline">
-                            <i class="fas fa-plus-circle"></i> <span>Создать пост</span>
-                        </a>
+                        
                         <!-- Круглая кнопка профиля -->
                         <div class="profile-dropdown">
                             <div class="profile-trigger">
@@ -103,6 +102,33 @@
     /* Логотип */
     .nav-brand {
         flex-shrink: 0;
+        position: relative;
+        padding: 0.5rem 1rem;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .nav-brand::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        border-radius: 12px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: -1;
+    }
+
+    .nav-brand:hover::before {
+        opacity: 1;
+    }
+
+    .nav-brand:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
     }
 
     .brand-link {
@@ -110,18 +136,30 @@
         align-items: center;
         text-decoration: none;
         color: #333;
-        font-weight: 700;
-        font-size: 1.5rem;
-        transition: color 0.3s ease;
+        font-weight: 800;
+        font-size: 1.6rem;
+        transition: all 0.3s ease;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
     }
 
     .brand-link:hover {
-        color: #667eea;
+        transform: scale(1.05);
     }
 
     .brand-icon {
-        margin-right: 0.5rem;
+        margin-right: 0.75rem;
         color: #667eea;
+        font-size: 1.8rem;
+        text-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
     }
 
     /* Навигация */
@@ -137,7 +175,7 @@
         align-items: center;
         text-decoration: none;
         color: #6c757d;
-        font-weight: 500;
+        font-weight: 700;
         padding: 0.5rem 1rem;
         border-radius: 8px;
         transition: all 0.3s ease;
@@ -209,7 +247,7 @@
 
     .btn-outline {
         background: transparent;
-        border: 2px solid #667eea;
+        border: 2px solid #747474ff;
         color: #667eea;
     }
 

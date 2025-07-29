@@ -138,7 +138,6 @@
         opacity: 0.8;
         animation: float 3s ease-in-out infinite;
     }
-    
     /* Features Section */
     .features-section {
         padding: 5rem 0;
@@ -210,7 +209,6 @@
         margin: 0;
     }
     
-    /* CTA Section */
     .cta-section {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         padding: 5rem 0;

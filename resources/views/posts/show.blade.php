@@ -93,36 +93,49 @@
         </div>
     @endauth
         <div class="comments-list">
-            @forelse($post->comments as $comment)
-                <div class="comment-item" id="comment-{{ $comment->id }}">
-                    <div class="comment-header">
-                        <strong>{{ $comment->user->name }}</strong>
-                        <span class="comment-date">{{ $comment->created_at->format('d.m.Y H:i') }}</span>
+    @forelse($post->comments as $comment)
+        <div class="comment-item" id="comment-{{ $comment->id }}">
+            <div class="comment-header">
+                <strong>{{ $comment->user->name }}</strong>
+                <span class="comment-date">{{ $comment->created_at->format('d.m.Y H:i') }}</span>
+            </div>
+            <div class="comment-text">
+                {{ $comment->text }}
+            </div>
+            <div class="comment-actions">
+                <!-- Кнопка лайка для комментария -->
+                @auth
+                    <button class="btn btn-comment-like" data-comment-id="{{ $comment->id }}">
+                        <img src="{{ asset('images/pets.png') }}" alt="Лапка кошки" class="paw-icon">
+                        <span class="likes-count">{{ $comment->likesCount() }}</span>
+                    </button>
+                @else
+                    <div class="comment-likes-info">
+                        <i class="far fa-heart"></i>
+                        <span>{{ $comment->likesCount() }}</span>
                     </div>
-                    <div class="comment-text">
-                        {{ $comment->text }}
-                    </div>
-                    @auth
-                        @if($comment->user_id === auth()->id())
-                            <div class="comment-actions">
-                                <form action="{{ route('comments.destroy', $comment) }}" method="POST" class="delete-comment-form">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-link btn-sm text-danger" 
-                                            onclick="return confirm('Вы уверены, что хотите удалить комментарий?')">
-                                        Удалить
-                                    </button>
-                                </form>
-                            </div>
-                        @endif
-                    @endauth
-                </div>
-            @empty
-                <div class="no-comments">
-                    <p>Пока нет комментариев. Будьте первым!</p>
-                </div>
-            @endforelse
+                @endauth
+
+                @auth
+                    @if($comment->user_id === auth()->id())
+                        <form action="{{ route('comments.destroy', $comment) }}" method="POST" class="delete-comment-form">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-link btn-sm text-danger" 
+                                    onclick="return confirm('Вы уверены, что хотите удалить комментарий?')">
+                                Удалить
+                            </button>
+                        </form>
+                    @endif
+                @endauth
+            </div>
         </div>
+    @empty
+        <div class="no-comments">
+            <p>Пока нет комментариев. Будьте первым!</p>
+        </div>
+    @endforelse
+    </div>
     </div>
         </article>
     </div>
@@ -639,6 +652,52 @@
         .heart-pulse {
             animation: pulse 0.3s ease;
         }
+        .btn-comment-like {
+            background: linear-gradient(135deg, #232f82ff 30%, #8c00ffff 100%);
+            color: #ffffffff;
+            border: 2px solid #001649ff;
+            padding: 0.3rem 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.1rem;
+            border-radius: 50px;
+            font-weight: 700;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 10px rgba(243, 156, 18, 0.3);
+        }
+        .btn-comment-like:focus {
+            outline: none;
+            box-shadow: none; 
+        }
+
+        .btn-comment-like:hover {
+            background: #800056ff;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .btn-comment-like.liked {
+            background: #dc3545;
+            color: white;
+        }
+
+        .comment-likes-info {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.25rem 0.75rem;
+            border: 1px solid #e1e5e9;
+            border-radius: 12px;
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+
+        .comment-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
     </style>
 
     <script>
@@ -649,7 +708,7 @@
                 const postId = this.dataset.postId;
                 const icon = this.querySelector('.paw-icon');
                 const countSpan = this.querySelector('span');
-                // Добавляем анимацию
+
                 icon.classList.add('heart-pulse');
                 fetch(`/posts/${postId}/like`, {
                     method: 'POST',
@@ -683,6 +742,43 @@
                 });
             });
         }
+    });
+        document.querySelectorAll('.btn-comment-like').forEach(button => {
+        button.addEventListener('click', function() {
+            const commentId = this.dataset.commentId;
+            const icon = this.querySelector('i');
+            const countSpan = this.querySelector('.likes-count');
+            
+            fetch(`/comments/${commentId}/like`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                
+                // Обновляем счетчик лайков
+                countSpan.textContent = data.likesCount;
+                
+                // Обновляем иконку
+                if (data.liked) {
+                    icon.className = 'fas fa-heart';
+                    this.classList.add('liked');
+                } else {
+                    icon.className = 'far fa-heart';
+                    this.classList.remove('liked');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+            });
+        });
     });
     </script>
 @endsection

@@ -2,38 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Post;
-use App\Models\Like;
+use App\Models\Comment;
+use App\Models\CommentLike;
 use Illuminate\Http\Request;
 
-class LikeController extends Controller
+class CommentLikeController extends Controller
 {
-    public function store(Post $post)
+    public function store(Comment $comment)
     {
-        
         if (!auth()->check()) {
             return response()->json(['error' => 'Вы должны быть авторизованы'], 401);
         }
 
-        $existingLike = Like::where('user_id', auth()->id())
-                           ->where('post_id', $post->id)
+        $existingLike = CommentLike::where('user_id', auth()->id())
+                           ->where('comment_id', $comment->id)
                            ->first();
 
         if ($existingLike) {
-
             $existingLike->delete();
             $liked = false;
         } else {
-            
-            Like::create([
+            CommentLike::create([
                 'user_id' => auth()->id(),
-                'post_id' => $post->id,
+                'comment_id' => $comment->id,
             ]);
             $liked = true;
         }
 
-        // Возвращаем обновленное количество лайков
-        $likesCount = $post->likes()->count();
+        $likesCount = $comment->likes()->count();
 
         return response()->json([
             'liked' => $liked,

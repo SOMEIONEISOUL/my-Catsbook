@@ -11,7 +11,6 @@ class CommentForm extends FormRequest
      */
     public function authorize(): bool
     {
-        // Пользователь должен быть авторизован для комментирования
         return auth()->check();
     }
 
@@ -23,7 +22,7 @@ class CommentForm extends FormRequest
     public function rules(): array
     {
         return [
-            'text' => 'required|string|max:1000', // Текст комментария обязательный, до 1000 символов
+            'text' => 'required|string|max:1000',
         ];
     }
 

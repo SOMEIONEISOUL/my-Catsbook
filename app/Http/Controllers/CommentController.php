@@ -17,11 +17,10 @@ class CommentController extends Controller
             'user_id' => auth()->id(),
         ]);
 
-        // Если это AJAX запрос, возвращаем JSON
         if ($request->ajax()) {
             return response()->json([
                 'success' => true,
-                'comment' => $comment->load('user'), // Загружаем данные пользователя
+                'comment' => $comment->load('user'),
                 'message' => 'Комментарий добавлен успешно!'
             ]);
         }
@@ -32,14 +31,12 @@ class CommentController extends Controller
 
     public function destroy(Comment $comment)
     {
-        // Проверяем, что пользователь является автором комментария
         if ($comment->user_id !== auth()->id()) {
             abort(403, 'Вы не можете удалить чужой комментарий');
         }
 
         $comment->delete();
 
-        // Если это AJAX запрос
         if (request()->ajax()) {
             return response()->json([
                 'success' => true,

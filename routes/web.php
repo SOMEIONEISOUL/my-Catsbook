@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\CommentLikeController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\ProfileController;
@@ -24,6 +25,7 @@ Route::get('/profile', [ProfileController::class,'showProfile'])->name('profile'
 
 Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store')->middleware('auth');
 Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy')->middleware('auth');
+Route::post('/comments/{comment}/like', [CommentLikeController::class, 'store'])->name('comments.like')->middleware('auth');
 
 Route::get('/login',[AuthController::class,'showLoginForm'])->name('login');
 Route::post('/login_process',[AuthController::class,'login'])->name('login_process');
