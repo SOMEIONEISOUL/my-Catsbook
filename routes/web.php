@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
@@ -12,12 +14,16 @@ Route::prefix('posts')->group(function () {
     Route::get('/', [PostController::class,'showPosts'])->name('posts');
     Route::get('/create', [PostController::class,'createPost'])->name('posts.create');
     Route::get('/my-posts', [PostController::class, 'myPosts'])->name('posts.my')->middleware('auth');
+    Route::post('/{post}/like', [LikeController::class, 'store'])->name('posts.like')->middleware('auth');
     Route::post('/', [PostController::class, 'storePost'])->name('posts.store');
-    Route::delete('/{id}', [PostController::class, 'destroy'])->name('posts.destroy')->middleware('auth');
-    Route::get('/{id}', [PostController::class,'showPost'])->name('posts.show');
+    Route::delete('/{post}', [PostController::class, 'destroy'])->name('posts.destroy')->middleware('auth');
+    Route::get('/{post}', [PostController::class,'showPost'])->name('posts.show');
 });
 
 Route::get('/profile', [ProfileController::class,'showProfile'])->name('profile');
+
+Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store')->middleware('auth');
+Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy')->middleware('auth');
 
 Route::get('/login',[AuthController::class,'showLoginForm'])->name('login');
 Route::post('/login_process',[AuthController::class,'login'])->name('login_process');
@@ -26,3 +32,4 @@ Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('regi
 Route::post('/register_process', [AuthController::class, 'register'])->name('register_process');
 
 Route::post('/logout',[AuthController::class,'logout'])->name('logout');
+

@@ -1,3 +1,4 @@
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <header class="header">
     <nav class="navbar">
         <div class="nav-container">
@@ -42,8 +43,7 @@
                                         <div class="profile-username">{{ auth()->user()->name }}</div>
                                         <div class="profile-email">{{ auth()->user()->email }}</div>
                                     </div>
-                                </div>
-                                <div class="profile-divider"></div>
+                                </div>           
                                 <a href="{{ route('profile') }}" class="profile-item">
                                     <i class="fas fa-user-circle"></i> Профиль
                                 </a>

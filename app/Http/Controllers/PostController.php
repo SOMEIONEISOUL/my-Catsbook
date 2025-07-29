@@ -7,9 +7,10 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {   
-    public function showPosts()
+    public function showPosts(Post $post)
     {
         $posts = Post::latest()->get();
+        $post->load('comments.user');
         return view('posts.index', compact('posts'));
     }
 
@@ -36,9 +37,8 @@ class PostController extends Controller
         return redirect()->route('posts')->with('success', 'Пост успешно создан!');
     }
 
-    public function showPost($id)
+    public function showPost(Post $post)
     {
-        $post = Post::findOrFail($id);
         return view('posts.show', compact('post'));
     }
 
@@ -49,9 +49,8 @@ class PostController extends Controller
         return view('posts.my', compact('posts'));
     }
 
-    public function destroy($id)
+    public function destroy(Post $post)
     {
-        $post = Post::findOrFail($id);
         if ($post->user_id !== auth()->id()) {
             abort(403, 'Вы не можете удалить чужой пост');
         }

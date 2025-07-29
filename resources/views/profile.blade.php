@@ -15,15 +15,15 @@
             <p class="profile-email">{{ auth()->user()->email }}</p>
             <div class="profile-stats">
                 <div class="stat-item">
-                    <span class="stat-number">0</span>
+                    <span class="stat-number">{{ auth()->user()->posts()->count() }}</span>
                     <span class="stat-label">Постов</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number">0</span>
+                    <span class="stat-number">{{ auth()->user()->likes()->count() }}</span>
                     <span class="stat-label">Лайков</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number">0</span>
+                    <span class="stat-number">{{ auth()->user()->comments()->count() }}</span>
                     <span class="stat-label">Комментариев</span>
                 </div>
             </div>
@@ -36,12 +36,12 @@
                 <h3 class="sidebar-title">Навигация</h3>
                 <ul class="nav-list">
                     <li class="nav-item active">
-                        <a href="#" class="nav-link">
+                        <a href="{{ route('profile') }}" class="nav-link">
                             <i class="fas fa-user"></i> Профиль
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="{{ route('posts.my')}}" class="nav-link">
                             <i class="fas fa-book"></i> Мои посты
                         </a>
                     </li>
@@ -124,16 +124,6 @@
                             </div>
                         </a>
                         
-                        <a href="#" class="action-card">
-                            <div class="action-icon warning">
-                                <i class="fas fa-cog"></i>
-                            </div>
-                            <div class="action-content">
-                                <h3 class="action-title">Настройки</h3>
-                                <p class="action-description">Изменить настройки профиля</p>
-                            </div>
-                        </a>
-                        
                         <a href="{{ route('logout') }}" class="action-card" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                             <div class="action-icon danger">
                                 <i class="fas fa-sign-out-alt"></i>
@@ -162,18 +152,6 @@
     }
 
     /* Profile Header */
-    .profile-header {
-        background: linear-gradient(135deg, #864586ff 20%, #000000ff 100%);
-        border-radius: 20px;
-        padding: 3rem;
-        color: white;
-        margin-bottom: 2rem;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-        display: flex;
-        align-items: center;
-        gap: 2rem;
-    }
-
     .profile-avatar {
         font-size: 5rem;
         color: rgba(255, 255, 255, 0.9);
