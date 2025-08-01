@@ -13,7 +13,8 @@ Route::get("/", [HomeController::class,"ShowHomePage"])->name('home');
 
 Route::prefix('posts')->group(function () {
     Route::get('/', [PostController::class,'showPosts'])->name('posts');
-    Route::get('/create', [PostController::class,'createPost'])->name('posts.create');
+    Route::get('/top', [PostController::class,'showTopPosts'])->name('posts.top');
+    Route::get('/create', [PostController::class,'createPost'])->name('posts.create')->middleware('auth');
     Route::get('/my-posts', [PostController::class, 'myPosts'])->name('posts.my')->middleware('auth');
     Route::post('/{post}/like', [LikeController::class, 'store'])->name('posts.like')->middleware('auth');
     Route::post('/', [PostController::class, 'storePost'])->name('posts.store');
@@ -21,7 +22,10 @@ Route::prefix('posts')->group(function () {
     Route::get('/{post}', [PostController::class,'showPost'])->name('posts.show');
 });
 
-Route::get('/profile', [ProfileController::class,'showProfile'])->name('profile');
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class,'showProfile'])->name('profile');
+});
+Route::get('/profile/{id}', [ProfileController::class, 'showOtherProfile'])->name('profile.public');
 
 Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store')->middleware('auth');
 Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy')->middleware('auth');

@@ -326,17 +326,18 @@
     }
 
     .dropdown-item {
-        display: flex;
         align-items: center;
         padding: 0.75rem 1rem;
         text-decoration: none;
-        color: #333;
+        color: #dc3545;
+        border-radius: 10px;
         transition: all 0.3s ease;
         width: 100%;
-        border: none;
+        border: 2px solid #dc3545;
         background: none;
         text-align: left;
         cursor: pointer;
+        font-weight: 500;
     }
 
     .dropdown-item i {
@@ -348,6 +349,7 @@
     .dropdown-item:hover {
         background: #f8f9fa;
         color: #667eea;
+        transform: translateY(-2px);
     }
 
     .dropdown-item.text-danger:hover {

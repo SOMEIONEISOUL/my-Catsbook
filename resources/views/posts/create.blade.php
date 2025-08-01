@@ -9,7 +9,7 @@
             </div>
             
             <div class="card-body">
-                <form action="{{ route('posts.store') }}" method="POST" class="post-form">
+                <form action="{{ route('posts.store') }}" method="POST" class="post-form" enctype="multipart/form-data">
                     @csrf
                     
                     <div class="form-group">
@@ -20,8 +20,28 @@
                                class="form-control" 
                                id="title" 
                                name="title" 
+                               value="{{ old('title') }}"
                                placeholder="Введите заголовок поста..."
                                required>
+                        @error('title')
+                            <div class="text-danger mt-1">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="photo" class="form-label">
+                            <i class="fas fa-image"></i> Фото
+                        </label>
+                        <input  type="file" 
+                                multiple 
+                                class="form-control" 
+                                id="photo[]" 
+                                name="photo[]" 
+                                accept="image/*"
+                                required>
+                        @error('photo')  
+                            <div class="text-danger mt-1">{{ $message }}</div>
+                        @enderror
                     </div>
                     
                     <div class="form-group">
@@ -33,7 +53,10 @@
                                   name="content" 
                                   rows="6" 
                                   placeholder="Напишите содержание поста..."
-                                  required></textarea>
+                                  required>{{ old('content') }}</textarea>
+                        @error('content')
+                            <div class="text-danger mt-1">{{ $message }}</div>
+                        @enderror
                     </div>
                     
                     <div class="form-actions">
@@ -123,6 +146,12 @@
         textarea.form-control {
             resize: vertical;
             min-height: 120px;
+        }
+        
+        .text-danger {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
         }
         
         .form-actions {

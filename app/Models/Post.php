@@ -12,10 +12,16 @@ class Post extends Model
     use HasFactory;
 
     protected $fillable = [
+        "photo",
         "title",
         "content",
         "user_id"
     ];
+
+    public function getPhotoUrlAttribute()
+    {
+        return $this->photo ? asset('storage/' . $this->photo) : null;
+    }
 
     public function user()
     {

@@ -22,6 +22,8 @@ class PostController extends Controller
     public function storePost(Request $request)
     {
         $validated = $request->validate([
+            'photo' => 'nullable|array|max:10',
+            'photo.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             'title' => 'required|max:100',
             'content' => 'required',
         ]);
@@ -29,6 +31,18 @@ class PostController extends Controller
         if (!auth()->check()) {
         abort(403, 'Вы должны быть авторизованы');
         }
+
+        $photoPaths = [];
+        if ($request->hasFile('photo')) {
+            foreach ($request->file('photo') as $file) {
+                $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('posts', $filename, 'public');
+                $photoPaths[] = $path;
+            }
+        }
+
+        $validated['photo'] = json_encode($photoPaths);
+        $validated['user_id'] = auth()->id();
 
         $validated['user_id'] = auth()->id();
 
@@ -58,6 +72,12 @@ class PostController extends Controller
         $post->delete();
         
         return redirect()->route('posts')->with('success', 'Пост успешно удален!');
+    }
+
+    public function showTopPosts()
+    {
+        $posts = Post::with('user')->withCount('likes')->orderBy('likes_count', 'desc')->limit(10)->get();
+        return view('posts.top', compact('posts'));
     }
 
 }
