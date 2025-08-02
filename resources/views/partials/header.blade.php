@@ -216,36 +216,51 @@
             position: relative;
         }
 
+        .profile-image {
+        width: 60px; /* Должно совпадать с размером .profile-circle */
+        height: 52px;
+        border-radius: 50%;
+        object-fit: cover;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        transition: transform 0.2s ease;
+        /* Центрируем изображение внутри кнопки */
+        display: block;
+        }
+        .profile-trigger:hover .profile-image,
+        .profile-trigger:focus .profile-image {
+            transform: scale(1.05);
+        }
+    
+        /* Убедимся, что .profile-trigger правильно центрирует содержимое */
         .profile-trigger {
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             padding: 0.25rem;
-            border-radius: var(--border-radius-circle);
+            border-radius: 50%;
             transition: background 0.3s ease;
-            height: 60px;
-            width: 60px;
+            height: 60px; /* Фиксированная высота */
+            width: 60px; /* Фиксированная ширина */
             background: none;
             border: none;
-            color: inherit; /* Наследуем цвет от родителя */
+            color: inherit;
         }
-
         .profile-trigger:hover,
         .profile-trigger:focus {
             background: #f0f0f0;
             outline: none;
         }
-
         .profile-trigger:focus {
-             outline: 2px solid var(--color-primary);
-             outline-offset: 2px;
-         }
-
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+        }
+        
+        /* Стили для иконки по умолчанию (остаются без изменений) */
         .profile-circle {
-            width: 60px;
-            height: 53px;
-            border-radius: 60px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
             background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
             display: flex;
             align-items: center;
@@ -255,10 +270,20 @@
             box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
             transition: transform 0.2s ease;
         }
-
         .profile-trigger:hover .profile-circle,
         .profile-trigger:focus .profile-circle {
             transform: scale(1.05);
+        }
+        
+        /* === Обновлённые стили для аватара в выпадающем меню === */
+        /* Стили для изображения аватара в выпадающем меню */
+        .profile-avatar-img-menu {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 1rem;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
         }
 
 
@@ -298,7 +323,7 @@
         .profile-avatar-circle {
             width: 50px;
             height: 50px;
-            border-radius: var(--border-radius-circle);
+            border-radius: 50%;
             background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
             display: flex;
             align-items: center;
@@ -306,7 +331,6 @@
             color: white;
             font-size: 1.3rem;
             margin-right: 1rem;
-            flex-shrink: 0; /* Предотвращает сжатие аватара */
         }
 
         .profile-info {
@@ -429,9 +453,10 @@
                 padding: 0.5rem 0.8rem;
                 font-size: 0.85rem;
             }
+            .profile-image,
             .profile-circle {
-                width: 35px;
-                height: 35px;
+                width: 40px;
+                height: 40px;
                 font-size: 1rem;
             }
             .brand-text {
@@ -516,15 +541,31 @@
                             <!-- Круглая кнопка профиля -->
                             <div class="profile-dropdown" data-dropdown>
                                 <button class="profile-trigger" aria-haspopup="true" aria-expanded="false" aria-label="Меню профиля">
+                                @if(auth()->user()->avatar_url)
+                                    <!-- Отображаем загруженную аватарку -->
+                                    <img src="{{ auth()->user()->avatar_url }}" 
+                                         alt="{{ auth()->user()->name }}" 
+                                         class="profile-image">
+                                @else
+                                    <!-- Отображаем иконку по умолчанию -->
                                     <div class="profile-circle">
                                         <i class="fas fa-user" aria-hidden="true"></i>
                                     </div>
-                                </button>
+                                @endif
+                            </button>
                                 <div class="profile-menu" role="menu">
                                     <div class="profile-header">
+                                        @if(auth()->user()->avatar_url)
+                                        <!-- Отображаем загруженную аватарку -->
+                                        <img src="{{ auth()->user()->avatar_url }}" 
+                                             alt="{{ auth()->user()->name }}" 
+                                             class="profile-avatar-img-menu">
+                                    @else
+                                        <!-- Отображаем иконку по умолчанию -->
                                         <div class="profile-avatar-circle">
                                             <i class="fas fa-user" aria-hidden="true"></i>
                                         </div>
+                                    @endif
                                         <div class="profile-info">
                                             <div class="profile-username">{{ auth()->user()->name }}</div>
                                             <div class="profile-email">{{ auth()->user()->email }}</div>

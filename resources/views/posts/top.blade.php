@@ -23,11 +23,24 @@
                 <h2 class="post-card-title">
                   <a href="{{ route('posts.show', $post) }}" class="post-link">{{ $post->title }}</a>
                 </h2>
-                @if($post->photo_url)
+                
+                <!-- Исправлено: логика отображения фото как в рабочем примере -->
+                @php
+                  // Предполагаем, что фото хранятся в поле $post->photo как JSON
+                  $photos = json_decode($post->photo, true) ?? [];
+                  // Берем первое фото для превью, если оно есть
+                  $firstPhoto = !empty($photos) ? $photos[0] : null;
+                @endphp
+                @if($firstPhoto)
                   <div class="post-card-image">
-                    <img src="{{ $post->photo_url }}" alt="{{ $post->title }}" class="img-fluid">
+                    <!-- Используем тот же путь, что и в рабочем примере -->
+                    <img src="{{ asset('storage/' . $firstPhoto) }}" 
+                         alt="{{ $post->title }}" 
+                         class="post-image-preview">
                   </div>
                 @endif
+                <!-- Конец исправлений -->
+
                 <div class="post-card-meta">
                   <div class="meta-item">
                     <i class="far fa-user"></i>
@@ -163,12 +176,15 @@
       text-align: center;
     }
 
-    .post-card-image img {
-      max-width: 100%;
-      height: 200px;
+    /* Исправлено: увеличен размер изображения */
+    .post-image-preview {
+      width: 100%;
+      height: 500px; /* Увеличена высота с 200px до 300px */
       object-fit: cover;
       border-radius: 8px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      display: block;
+      margin: 0 auto;
     }
 
     .post-card-meta {
@@ -281,6 +297,11 @@
         width: 100%;
         justify-content: space-between;
       }
+      
+      /* Адаптивные стили для изображения */
+      .post-image-preview {
+        height: 250px; /* Уменьшена высота на планшетах */
+      }
     }
 
     @media (max-width: 480px) {
@@ -318,8 +339,8 @@
         font-size: 0.8rem;
       }
 
-      .post-card-image img {
-        height: 150px;
+      .post-image-preview {
+        height: 200px; /* Еще меньше на мобильных */
       }
 
       .btn-read-more {

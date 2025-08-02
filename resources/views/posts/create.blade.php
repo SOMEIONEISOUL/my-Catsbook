@@ -1,7 +1,7 @@
 @extends('layout.app')
 @section('title', 'Создать пост')
 @section('content')
-  @include('partials.header')
+    @include('partials.header')
     <div class="create-post-container">
         <div class="post-card">
             <div class="card-header">

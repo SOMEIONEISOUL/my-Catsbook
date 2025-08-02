@@ -19,7 +19,6 @@ return new class extends Migration
 
             $table->unique(['user_id', 'comment_id']);
 
-            // Внешние ключи
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('comment_id')->references('id')->on('comments')->onDelete('cascade');
         });

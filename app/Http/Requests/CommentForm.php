@@ -26,9 +26,6 @@ class CommentForm extends FormRequest
         ];
     }
 
-    /**
-     * Получение пользовательских сообщений об ошибках
-     */
     public function messages(): array
     {
         return [

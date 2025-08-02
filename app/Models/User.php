@@ -6,6 +6,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+// Добавлено для работы с файлами
+use Illuminate\Support\Facades\Storage; 
 
 class User extends Authenticatable
 {
@@ -21,6 +23,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'avatar_path',
     ];
 
     /**
@@ -59,5 +62,17 @@ class User extends Authenticatable
     public function comments()
     {
         return $this->hasMany(Comment::class);
+    }
+
+    public function getAvatarUrlAttribute()
+    {
+        if ($this->avatar_path) {
+            if (filter_var($this->avatar_path, FILTER_VALIDATE_URL)) {
+                return $this->avatar_path;
+            }
+            return Storage::url($this->avatar_path);
+        }
+
+        return null;
     }
 }

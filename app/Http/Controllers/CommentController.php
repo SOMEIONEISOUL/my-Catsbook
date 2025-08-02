@@ -25,7 +25,6 @@ class CommentController extends Controller
             ]);
         }
 
-        // Если обычный запрос, перенаправляем назад
         return redirect()->back()->with('success', 'Комментарий добавлен успешно!');
     }
 

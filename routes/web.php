@@ -24,6 +24,8 @@ Route::prefix('posts')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class,'showProfile'])->name('profile');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
 Route::get('/profile/{id}', [ProfileController::class, 'showOtherProfile'])->name('profile.public');
 

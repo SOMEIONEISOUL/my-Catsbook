@@ -4,9 +4,32 @@
 @include('partials.header')
 <div class="profile-container">
     <div class="profile-headers" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-        <div class="profile-avatar">
-            <i class="fas fa-user-circle"></i>
+        <!-- Обновлённый блок аватара -->
+        <div class="profile-avatar-container">
+            @if(auth()->check() && auth()->id() == $user->id)
+                <!-- Аватар владельца профиля с возможностью просмотра редактирования -->
+                <a href="{{ route('profile.edit') }}" class="avatar-link" title="Изменить аватар">
+                    @if($user->avatar_url)
+                        <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="profile-avatar-img">
+                    @else
+                        <div class="profile-avatar-placeholder">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                    @endif
+                </a>
+            @else
+                <!-- Аватар другого пользователя -->
+                @if($user->avatar_url)
+                    <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="profile-avatar-img">
+                @else
+                    <div class="profile-avatar-placeholder">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                @endif
+            @endif
         </div>
+        <!-- Конец обновлённого блока аватара -->
+        
         <div class="profile-info">
             <h1 class="profile-name">{{ $user->name }}</h1>
             <p class="profile-emails">
@@ -45,6 +68,12 @@
                         <li class="nav-item {{ request()->is('profile') && (!isset($user) || (auth()->check() && $user->id == auth()->id())) ? 'active' : '' }}">
                             <a href="{{ route('profile') }}" class="nav-link">
                                 <i class="fas fa-user"></i> Профиль
+                            </a>
+                        </li>
+                        <!-- Добавлен пункт для редактирования профиля -->
+                        <li class="nav-item {{ request()->is('profile/edit') ? 'active' : '' }}">
+                            <a href="{{ route('profile.edit') }}" class="nav-link">
+                                <i class="fas fa-user-edit"></i> Редактировать профиль
                             </a>
                         </li>
                         <li class="nav-item {{ request()->is('posts/my') ? 'active' : '' }}">
@@ -169,11 +198,78 @@
         color: white;
         margin-bottom: 2rem;
     }
-    .profile-avatar {
-        font-size: 5rem;
-        color: rgba(255, 255, 255, 0.9);
+    /* === Обновлённые стили для аватара === */
+    .profile-avatar-container {
+        position: relative;
         margin-right: 2rem;
     }
+
+    .profile-avatar-img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+    }
+
+    .profile-avatar-placeholder {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        /* background: rgba(255, 255, 255, 0.2); Убираем фон */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 5rem;
+        color: rgba(255, 255, 255, 0.8);
+        /* border: 3px solid rgba(255, 255, 255, 0.3); Убираем рамку */
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .avatar-link {
+        display: block;
+        position: relative;
+    }
+
+    .avatar-link:hover .profile-avatar-img {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+
+    .avatar-link:hover .profile-avatar-placeholder {
+        /* background: rgba(255, 255, 255, 0.3); Убираем изменение фона */
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+
+    .avatar-link::after {
+        content: "\f303"; /* Unicode для иконки карандаша (fa-pencil-alt) */
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        background: rgba(102, 126, 234, 0.9);
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        border: 2px solid white;
+    }
+
+    .avatar-link:hover::after {
+        opacity: 1;
+    }
+    /* === Конец обновлённых стилей для аватара === */
+    
     .profile-info {
         flex: 1;
     }
@@ -409,8 +505,13 @@
          .profile-headers {
             padding: 2rem;
         }
-        .profile-avatar {
+        .profile-avatar-container {
             margin-right: 1.5rem;
+        }
+        .profile-avatar-img,
+        .profile-avatar-placeholder {
+            width: 100px;
+            height: 100px;
             font-size: 4rem;
         }
     }
@@ -424,7 +525,7 @@
             flex-direction: column;
             text-align: center;
         }
-         .profile-avatar {
+         .profile-avatar-container {
             margin-right: 0;
             margin-bottom: 1rem;
         }
@@ -453,6 +554,18 @@
         }
         .action-card {
             padding: 1rem;
+        }
+        .profile-avatar-img,
+        .profile-avatar-placeholder {
+            width: 80px;
+            height: 80px;
+            font-size: 3rem;
+        }
+        
+        .avatar-link::after {
+            width: 25px;
+            height: 25px;
+            font-size: 0.6rem;
         }
     }
     /* Анимации */

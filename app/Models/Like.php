@@ -14,13 +14,11 @@ class Like extends Model
         'post_id',
     ];
 
-    // Связь с пользователем
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // Связь с постом
     public function post()
     {
         return $this->belongsTo(Post::class);

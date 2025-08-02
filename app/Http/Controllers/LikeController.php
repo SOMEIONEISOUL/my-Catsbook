@@ -32,7 +32,6 @@ class LikeController extends Controller
             $liked = true;
         }
 
-        // Возвращаем обновленное количество лайков
         $likesCount = $post->likes()->count();
 
         return response()->json([
