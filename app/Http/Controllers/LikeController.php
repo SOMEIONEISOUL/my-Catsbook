@@ -16,8 +16,8 @@ class LikeController extends Controller
         }
 
         $existingLike = Like::where('user_id', auth()->id())
-                           ->where('post_id', $post->id)
-                           ->first();
+        ->where('post_id', $post->id)
+        ->first();
 
         if ($existingLike) {
 

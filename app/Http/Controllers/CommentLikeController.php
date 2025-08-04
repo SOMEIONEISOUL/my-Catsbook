@@ -15,8 +15,8 @@ class CommentLikeController extends Controller
         }
 
         $existingLike = CommentLike::where('user_id', auth()->id())
-                           ->where('comment_id', $comment->id)
-                           ->first();
+        ->where('comment_id', $comment->id)
+        ->first();
 
         if ($existingLike) {
             $existingLike->delete();
