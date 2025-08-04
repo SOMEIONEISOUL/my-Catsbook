@@ -70,7 +70,7 @@
                 </a>
 
                 @auth
-                <button class="btn btn-paw" id="likeButton" data-post-id="{{ $post->id }}">
+                <button class="btn btn-paw {{ ($userLiked ?? false) ? 'liked' : '' }}" id="likeButton" data-post-id="{{ $post->id }}">
                     <img src="{{ asset('images/pets.png') }}" alt="Лапка кошки" class="paw-icon">
                     <span id="likesCount">{{ $post->likesCount() }}</span>
                 </button>
@@ -136,15 +136,14 @@
             @endauth
 
             <div class="comments-list">
-                @forelse($post->comments as $comment)
+                
+                @forelse($post->comments->sortByDesc('likes_count')->sortByDesc('created_at')->values() as $comment)
                 <div class="comment-item" id="comment-{{ $comment->id }}">
                     <div class="comment-header">
                         <strong>{{ $comment->user->name }}</strong>
                         <span class="comment-date">{{ $comment->created_at->format('d.m.Y H:i') }}</span>
                     </div>
-                    <div class="comment-text">
-                        {{ $comment->text }}
-                    </div>
+                    <div class="comment-text">{{ $comment->text }}</div>
                     <div class="comment-actions">
                         @auth
                         <button class="btn btn-comment-like" data-comment-id="{{ $comment->id }}">
@@ -160,12 +159,12 @@
 
                         @auth
                         @if($comment->user_id === auth()->id())
-                        <form action="{{ route('comments.destroy', $comment) }}" method="POST"
-                            class="delete-comment-form">
+                        <form action="{{ route('comments.destroy', $comment) }}" method="POST" class="delete-comment-form">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-link btn-sm text-danger"
-                                onclick="return confirm('Вы уверены, что хотите удалить комментарий?')">
+                             onclick="return confirm('Вы уверены, что хотите удалить комментарий?')">
+                                
                                 Удалить
                             </button>
                         </form>
@@ -686,6 +685,7 @@
     .comment-actions .btn-link {
         padding: 0;
         text-decoration: none;
+        outline: none;
     }
 
     .no-comments {
@@ -724,7 +724,6 @@
     .btn-paw {
         background: linear-gradient(135deg, #c32222ff 30%, #b335a8ff 100%);
         color: #ffffffff;
-        border: 2px solid #c1299bff;
         padding: 0.7rem 1.3rem;
         display: flex;
         align-items: center;
@@ -764,31 +763,35 @@
         transition: filter 0.3s ease, transform 0.3s ease;
     }
 
+
     .btn-comment-like {
         background: linear-gradient(135deg, #c32222ff 30%, #b335a8ff 100%);
-        color: white;
-        border: 2px solid #c1299bff;
-        padding: 0.3rem 0.8rem;
+        color: #ffffffff;
+        padding: 0.7rem 1.3rem;
         display: flex;
         align-items: center;
-        gap: 0.1rem;
+        gap: 0.6rem;
         border-radius: 50px;
         font-weight: 700;
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 6px 20px rgba(245, 101, 187, 0.5);
     }
 
     .btn-comment-like:hover {
         background: linear-gradient(135deg, #e00d0dff 30%, #d20ec2ff 100%);
         color: white;
-        transform: translateY(-3px) scale(1.08);
+        box-shadow: 0 6px 20px rgba(245, 101, 187, 0.5);
+    }
+
+    .btn-comment-like:focus {
+        outline: none;
+        box-shadow: none;
     }
 
     .comment-likes-info {
         display: inline-flex;
         align-items: center;
-        gap: 0.3rem;
         padding: 0.25rem 0.75rem;
-        border: 1px solid #e1e5e9;
         border-radius: 12px;
         color: #6c757d;
         font-size: 0.85rem;
@@ -796,92 +799,95 @@
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Инициализация Swiper
-        const swiper = new Swiper('.post-swiper', {
-            // Основные параметры
-            loop: false, // Можно включить, если нужно зациклить
-            slidesPerView: 1,
-            spaceBetween: 0,
+document.addEventListener('DOMContentLoaded', function () {
+    // Инициализация Swiper
+    const swiper = new Swiper('.post-swiper', {
+        // Основные параметры
+        loop: false, // Можно включить, если нужно зациклить
+        slidesPerView: 1,
+        spaceBetween: 0,
+        // Навигация кнопками
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+    });
 
-            // Навигация кнопками
-            navigation: {
-                nextEl: '.swiper-button-next',
-                prevEl: '.swiper-button-prev',
-            },
+    // --- ОСНОВНОЙ JAVASCRIPT ДЛЯ ЛАЙКОВ И КОММЕНТАРИЕВ ---
 
-        });
-
-        // --- Остальной ваш JavaScript ---
-        const likeButton = document.getElementById('likeButton');
-        if (likeButton) {
-            likeButton.addEventListener('click', function () {
-                const postId = this.dataset.postId;
-                const icon = this.querySelector('.paw-icon');
-                const countSpan = this.querySelector('span');
-                icon.classList.add('heart-pulse');
-                fetch(`/posts/${postId}/like`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    }
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.error) {
-                            alert(data.error);
-                            return;
-                        }
-                        countSpan.textContent = data.likesCount;
-                        if (data.liked) {
-                            this.classList.add('liked');
-                        } else {
-                            this.classList.remove('liked');
-                        }
-                        setTimeout(() => {
-                            icon.classList.remove('heart-pulse');
-                        }, 300);
-                    })
-                    .catch(error => {
-                        console.error('Ошибка:', error);
-                        icon.classList.remove('heart-pulse');
-                    });
+    // Лайк поста
+    const likeButton = document.getElementById('likeButton');
+    if (likeButton) {
+        const isInitiallyLiked = likeButton.classList.contains('liked');
+        likeButton.addEventListener('click', function () {
+            const postId = this.dataset.postId;
+            const icon = this.querySelector('.paw-icon');
+            const countSpan = this.querySelector('span');
+            icon.classList.add('heart-pulse');
+            fetch(`/posts/${postId}/like`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                countSpan.textContent = data.likesCount;
+                if (data.liked) {
+                    this.classList.add('liked');
+                } else {
+                    this.classList.remove('liked');
+                }
+                setTimeout(() => {
+                    icon.classList.remove('heart-pulse');
+                }, 300);
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                icon.classList.remove('heart-pulse');
             });
-        }
+        });
+    }
 
-        document.querySelectorAll('.btn-comment-like').forEach(button => {
-            button.addEventListener('click', function () {
-                const commentId = this.dataset.commentId;
-                const icon = this.querySelector('.paw-icon');
-                const countSpan = this.querySelector('.likes-count');
-                fetch(`/comments/${commentId}/like`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    }
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.error) {
-                            alert(data.error);
-                            return;
-                        }
-                        countSpan.textContent = data.likesCount;
-                        if (data.liked) {
-                            this.classList.add('liked');
-                            icon.style.filter = 'invert(0)';
-                        } else {
-                            this.classList.remove('liked');
-                            icon.style.filter = 'invert(1)';
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Ошибка:', error);
-                    });
+    // Лайки комментариев
+    document.querySelectorAll('.btn-comment-like').forEach(button => {
+        button.addEventListener('click', function () {
+            const commentId = this.dataset.commentId;
+            const icon = this.querySelector('.paw-icon');
+            const countSpan = this.querySelector('.likes-count');
+            fetch(`/comments/${commentId}/like`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                countSpan.textContent = data.likesCount;
+                if (data.liked) {
+                    this.classList.add('liked');
+                    icon.style.filter = 'invert(0)';
+                } else {
+                    this.classList.remove('liked');
+                    icon.style.filter = 'invert(1)';
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
             });
         });
     });
+
+});
 </script>
 @endsection

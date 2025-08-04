@@ -51,9 +51,15 @@ class PostController extends Controller
         return redirect()->route('posts')->with('success', 'Пост успешно создан!');
     }
 
-    public function showPost(Post $post)
-    {
-        return view('posts.show', compact('post'));
+    public function showPost($id)
+    {   
+        $post = Post::with(['user', 'comments.user'])->findOrFail($id);
+        $userLiked = false;
+        if (auth()->check()) {
+            $userLiked = $post->likes()->where('user_id', auth()->id())->exists();
+        }
+
+        return view('posts.show', compact('post', 'userLiked'));
     }
 
     public function myPosts()

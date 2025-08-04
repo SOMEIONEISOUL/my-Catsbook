@@ -9,8 +9,7 @@
         <link href="https://unpkg.com/tailwindcss@2.0.3/dist/tailwind.min.css" rel="stylesheet">
     </head>
     <body>
-        @yield('content')   
-        <script src="/js/app.js"> </script>
+        @yield('content')
     </body>
 </html>
 
