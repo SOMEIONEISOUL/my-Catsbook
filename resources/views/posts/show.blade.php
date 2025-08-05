@@ -799,6 +799,210 @@
 </style>
 
 <script>
+// Обработка отправки формы комментариев через AJAX
+const commentForm = document.querySelector('.comment-form');
+if (commentForm) {
+    commentForm.addEventListener('submit', function(e) {
+        e.preventDefault(); // Предотвращаем стандартную отправку формы
+        
+        const formData = new FormData(this);
+        const action = this.action;
+        
+        // Блокируем кнопку отправки во время запроса
+        const submitButton = this.querySelector('button[type="submit"]');
+        const originalText = submitButton.textContent;
+        submitButton.disabled = true;
+        submitButton.textContent = 'Отправка...';
+        
+        fetch(action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Очищаем форму
+                this.reset();
+                
+                // Создаем и добавляем новый комментарий в DOM
+                const commentsList = document.querySelector('.comments-list');
+                if (commentsList) {
+                    const noCommentsDiv = document.querySelector('.no-comments');
+                    if (noCommentsDiv) {
+                        noCommentsDiv.remove();
+                    }
+                    
+                    const newComment = document.createElement('div');
+                    newComment.className = 'comment-item';
+                    newComment.id = `comment-${data.comment.id}`;
+                    newComment.innerHTML = `
+                        <div class="comment-header">
+                            <strong>${data.comment.user.name}</strong>
+                            <span class="comment-date">только что</span>
+                        </div>
+                        <div class="comment-text">${data.comment.text}</div>
+                        <div class="comment-actions">
+                            <button class="btn btn-comment-like" data-comment-id="${data.comment.id}">
+                                <img src="${document.querySelector('.paw-icon').src}" alt="Лапка кошки" class="paw-icon">
+                                <span class="likes-count">0</span>
+                            </button>
+                            <form action="/comments/${data.comment.id}" method="POST" class="delete-comment-form">
+                                <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').getAttribute('content')}">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button type="submit" class="btn btn-link btn-sm text-danger" 
+                                 onclick="return confirm('Вы уверены, что хотите удалить комментарий?')">
+                                    Удалить
+                                </button>
+                            </form>
+                        </div>
+                    `;
+                    commentsList.prepend(newComment);
+                    
+                    // Добавляем обработчик лайка для нового комментария
+                    const newLikeButton = newComment.querySelector('.btn-comment-like');
+                    if (newLikeButton) {
+                        newLikeButton.addEventListener('click', function() {
+                            const commentId = this.dataset.commentId;
+                            const icon = this.querySelector('.paw-icon');
+                            const countSpan = this.querySelector('.likes-count');
+                            
+                            fetch(`/comments/${commentId}/like`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.error) {
+                                    alert(data.error);
+                                    return;
+                                }
+                                countSpan.textContent = data.likesCount;
+                                if (data.liked) {
+                                    this.classList.add('liked');
+                                    icon.style.filter = 'invert(0)';
+                                } else {
+                                    this.classList.remove('liked');
+                                    icon.style.filter = 'invert(1)';
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Ошибка:', error);
+                            });
+                        });
+                    }
+                }
+                
+            } else {
+                alert('Ошибка при добавлении комментария');
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            alert('Произошла ошибка при отправке комментария');
+        })
+        .finally(() => {
+            // Восстанавливаем кнопку отправки
+            submitButton.disabled = false;
+            submitButton.textContent = originalText;
+        });
+    });
+}
+
+// Делегирование события для обработки удаления комментариев через AJAX
+// Используем делегирование, потому что новые комментарии добавляются динамически
+document.addEventListener('submit', function(e) {
+    // Проверяем, является ли цель (e.target) формой удаления комментария
+    if (e.target.matches('.delete-comment-form')) {
+        e.preventDefault(); // Предотвращаем стандартную отправку формы
+        
+        const form = e.target;
+        const action = form.action;
+        const method = form.querySelector('input[name="_method"]')?.value || form.method;
+        
+        // Блокируем кнопку отправки во время запроса
+        const submitButton = form.querySelector('button[type="submit"]');
+        const originalText = submitButton.textContent;
+        submitButton.disabled = true;
+        submitButton.textContent = 'Удаление...';
+        
+        // Собираем данные для отправки (включая CSRF токен и метод)
+        const formData = new FormData(form);
+        
+        fetch(action, {
+            method: 'POST', // Laravel обычно использует POST для DELETE через _method
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                // 'X-CSRF-TOKEN' уже в FormData через скрытое поле _token
+                // Но можно и так, для надежности:
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => {
+             // Проверяем, является ли ответ JSON
+             const contentType = response.headers.get("content-type");
+             if (contentType && contentType.indexOf("application/json") !== -1) {
+                 return response.json();
+             } else {
+                 // Если не JSON, возможно, редирект или ошибка
+                 return response.text().then(text => {
+                     console.warn('Получен не JSON ответ:', text);
+                     // Пытаемся преобразовать, если это возможно, или выбрасываем ошибку
+                     try {
+                         return JSON.parse(text);
+                     } catch (e) {
+                         // Если не JSON, создаем объект ошибки
+                         return { success: false, message: 'Неожиданный ответ от сервера' };
+                     }
+                 });
+             }
+        })
+        .then(data => {
+            if (data.success) {
+                // Удаляем комментарий из DOM
+                const commentItem = form.closest('.comment-item');
+                if (commentItem) {
+                    commentItem.remove();
+                    
+                    // Проверяем, остались ли комментарии, и показываем сообщение "Пока нет комментариев" при необходимости
+                     const commentsList = document.querySelector('.comments-list');
+                     const commentItems = commentsList?.querySelectorAll('.comment-item');
+                     if (commentsList && (!commentItems || commentItems.length === 0)) {
+                         const noCommentsDiv = document.createElement('div');
+                         noCommentsDiv.className = 'no-comments';
+                         noCommentsDiv.innerHTML = '<p>Пока нет комментариев. Будьте первым!</p>';
+                         commentsList.appendChild(noCommentsDiv);
+                     }
+                } else {
+                    location.reload(); // Или location.href = location.href;
+                }
+            } else {
+                const errorMsg = data.message || data.error || 'Ошибка при удалении комментария';
+                alert(errorMsg);
+                console.error('Ошибка удаления:', errorMsg);
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка сети или парсинга:', error);
+            alert('Произошла ошибка при удалении комментария: ' + error.message);
+        })
+        .finally(() => {
+            // Восстанавливаем кнопку отправки
+            if (submitButton && originalText) {
+                submitButton.disabled = false;
+                submitButton.textContent = originalText;
+            }
+        });
+    }
+});
+
 document.addEventListener('DOMContentLoaded', function () {
     // Инициализация Swiper
     const swiper = new Swiper('.post-swiper', {
@@ -887,6 +1091,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     });
+    
 
 });
 </script>

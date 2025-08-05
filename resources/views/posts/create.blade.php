@@ -37,8 +37,7 @@
                                 class="form-control" 
                                 id="photo[]" 
                                 name="photo[]" 
-                                accept="image/*"
-                                required>
+                                accept="image/*">
                         @error('photo')  
                             <div class="text-danger mt-1">{{ $message }}</div>
                         @enderror
