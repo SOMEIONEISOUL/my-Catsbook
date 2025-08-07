@@ -10,12 +10,18 @@
 
 <style>
     .footer {
-        background: #f8f9fa; /* Светло-серый фон */
-        border-top: 1px solid #e0e0e0; /* Тонкая граница сверху */
-        padding: 1rem 0; /* Вертикальный отступ */
-        margin-top: auto; /* Прижимает футер к низу, если используется flexbox для body/html */
-        color: #6c757d; /* Цвет текста серо-голубой, как в хедере */
-        font-size: 0.9rem; /* Немного меньший размер шрифта */
+        background: #f8f9fa;
+        /* Светло-серый фон */
+        border-top: 1px solid #e0e0e0;
+        /* Тонкая граница сверху */
+        padding: 1rem 0;
+        /* Вертикальный отступ */
+        margin-top: auto;
+        /* Прижимает футер к низу, если используется flexbox для body/html */
+        color: #6c757d;
+        /* Цвет текста серо-голубой, как в хедере */
+        font-size: 0.9rem;
+        /* Немного меньший размер шрифта */
     }
 
     .footer-container {
@@ -27,12 +33,14 @@
 
     .footer-info {
         flex: absolute;
-        min-width: 200px; /* Минимальная ширина для текста копирайта */
+        min-width: 200px;
+        /* Минимальная ширина для текста копирайта */
     }
 
     .footer-text {
         /* Цвет наследуется от .footer */
     }
+
     /* Адаптивность для мобильных устройств */
     @media (max-width: 768px) {
         .footer-container {
@@ -44,5 +52,5 @@
             align-items: flex-start;
             gap: 0.75rem;
         }
-      }
+    }
 </style>

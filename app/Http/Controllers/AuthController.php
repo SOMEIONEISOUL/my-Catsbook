@@ -20,8 +20,7 @@ class AuthController extends Controller
     {
         $data = $request->validated();
 
-        if(auth("web")->attempt($data))
-        {
+        if (auth("web")->attempt($data)) {
             return redirect(route("posts"));
         }
 
@@ -37,20 +36,19 @@ class AuthController extends Controller
     public function showRegisterForm()
     {
         return view("auth.register");
-    } 
+    }
 
     public function register(RegistrationForm $request)
     {
         $data = $request->validated();
-        
+
         $user = User::create([
-            "name"=> $data["name"],
-            "email"=> $data["email"],
-            "password"=> bcrypt($data["password"]),
+            "name" => $data["name"],
+            "email" => $data["email"],
+            "password" => bcrypt($data["password"]),
         ]);
 
-        if($user)
-        {
+        if ($user) {
             auth("web")->login($user);
         }
 

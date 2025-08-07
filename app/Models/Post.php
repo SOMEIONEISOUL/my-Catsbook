@@ -27,7 +27,7 @@ class Post extends Model
     {
         return $this->belongsTo(User::class);
     }
-    
+
     public function likes()
     {
         return $this->hasMany(Like::class);
@@ -38,10 +38,10 @@ class Post extends Model
         if (!auth()->check()) {
             return false;
         }
-        
+
         return $this->likes()->where('user_id', auth()->id())->exists();
     }
-    
+
     public function likesCount()
     {
         return $this->likes()->count();

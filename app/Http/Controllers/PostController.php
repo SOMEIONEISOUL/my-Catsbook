@@ -6,7 +6,7 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
-{   
+{
     public function showPosts(Post $post)
     {
         $posts = Post::latest()->get();
@@ -29,7 +29,7 @@ class PostController extends Controller
         ]);
 
         if (!auth()->check()) {
-        abort(403, 'Вы должны быть авторизованы');
+            abort(403, 'Вы должны быть авторизованы');
         }
 
         $photoPaths = [];
@@ -52,7 +52,7 @@ class PostController extends Controller
     }
 
     public function showPost($id)
-    {   
+    {
         $post = Post::with(['user', 'comments.user'])->findOrFail($id);
         $userLiked = false;
         if (auth()->check()) {
@@ -74,9 +74,9 @@ class PostController extends Controller
         if ($post->user_id !== auth()->id()) {
             abort(403, 'Вы не можете удалить чужой пост');
         }
-        
+
         $post->delete();
-        
+
         return redirect()->route('posts')->with('success', 'Пост успешно удален!');
     }
 

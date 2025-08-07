@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -39,7 +40,8 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             line-height: 1.6;
             color: var(--color-text);
-            /* background-color: #f5f7fa; */ /* Убран фон страницы */
+            /* background-color: #f5f7fa; */
+            /* Убран фон страницы */
         }
 
 
@@ -64,7 +66,8 @@
             align-items: center;
             justify-content: space-between;
             height: var(--navbar-height);
-            gap: 1rem; /* Общий отступ между частями */
+            gap: 1rem;
+            /* Общий отступ между частями */
         }
 
         /* Логотип */
@@ -127,7 +130,8 @@
         .nav-link:focus {
             color: var(--color-primary);
             background: rgba(102, 126, 234, 0.1);
-            outline: none; /* Убираем outline при фокусе */
+            outline: none;
+            /* Убираем outline при фокусе */
         }
 
         .nav-link.active {
@@ -217,20 +221,22 @@
         }
 
         .profile-image {
-        width: 60px; /* Должно совпадать с размером .profile-circle */
-        height: 52px;
-        border-radius: 50%;
-        object-fit: cover;
-        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-        transition: transform 0.2s ease;
-        /* Центрируем изображение внутри кнопки */
-        display: block;
+            width: 60px;
+            /* Должно совпадать с размером .profile-circle */
+            height: 52px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+            transition: transform 0.2s ease;
+            /* Центрируем изображение внутри кнопки */
+            display: block;
         }
+
         .profile-trigger:hover .profile-image,
         .profile-trigger:focus .profile-image {
             transform: scale(1.05);
         }
-    
+
         /* Убедимся, что .profile-trigger правильно центрирует содержимое */
         .profile-trigger {
             display: flex;
@@ -240,22 +246,26 @@
             padding: 0.25rem;
             border-radius: 50%;
             transition: background 0.3s ease;
-            height: 60px; /* Фиксированная высота */
-            width: 60px; /* Фиксированная ширина */
+            height: 60px;
+            /* Фиксированная высота */
+            width: 60px;
+            /* Фиксированная ширина */
             background: none;
             border: none;
             color: inherit;
         }
+
         .profile-trigger:hover,
         .profile-trigger:focus {
             background: #f0f0f0;
             outline: none;
         }
+
         .profile-trigger:focus {
             outline: 2px solid var(--color-primary);
             outline-offset: 2px;
         }
-        
+
         /* Стили для иконки по умолчанию (остаются без изменений) */
         .profile-circle {
             width: 36px;
@@ -270,20 +280,21 @@
             box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
             transition: transform 0.2s ease;
         }
+
         .profile-trigger:hover .profile-circle,
         .profile-trigger:focus .profile-circle {
             transform: scale(1.05);
         }
-        
+
         /* === Обновлённые стили для аватара в выпадающем меню === */
         /* Стили для изображения аватара в выпадающем меню */
         .profile-avatar-img-menu {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        object-fit: cover;
-        margin-right: 1rem;
-        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 1rem;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
         }
 
 
@@ -303,7 +314,8 @@
             transition: var(--transition-default);
             z-index: 1000;
             border: 1px solid var(--color-border);
-            list-style: none; /* Убираем маркеры списка */
+            list-style: none;
+            /* Убираем маркеры списка */
         }
 
         /* Класс для открытого состояния меню */
@@ -335,7 +347,8 @@
 
         .profile-info {
             flex: 1;
-            min-width: 0; /* Позволяет обрезать длинный текст */
+            min-width: 0;
+            /* Позволяет обрезать длинный текст */
         }
 
         .profile-username {
@@ -362,7 +375,8 @@
         }
 
         .profile-menu-item {
-            margin: 0px;;
+            margin: 0px;
+            ;
         }
 
         .profile-item {
@@ -373,7 +387,8 @@
             color: var(--color-text);
             transition: var(--transition-default);
             font-weight: 500;
-            width: 100%; /* Занимает всю ширину для удобства клика */
+            width: 100%;
+            /* Занимает всю ширину для удобства клика */
         }
 
         .profile-item i {
@@ -395,15 +410,17 @@
             background: var(--color-danger);
             color: white;
         }
-        
+
         /* Адаптивность */
         @media (max-width: 992px) {
             .nav-container {
                 padding: 0 clamp(0.75rem, 2vw, 1rem);
             }
+
             .nav-menu {
                 gap: 1rem;
             }
+
             .nav-buttons,
             .auth-buttons {
                 gap: 0.75rem;
@@ -417,54 +434,69 @@
                 padding: 1rem;
                 gap: 0.75rem;
             }
+
             .nav-menu {
                 order: 3;
                 width: 100%;
                 justify-content: flex-start;
                 margin-top: 1rem;
                 gap: 0.5rem;
-                flex-wrap: wrap; /* Позволяет перенос строк */
+                flex-wrap: wrap;
+                /* Позволяет перенос строк */
             }
+
             .nav-link {
                 padding: 0.5rem;
                 font-size: 0.9rem;
             }
+
             .nav-link span {
                 display: none;
             }
+
             .nav-link i {
                 margin-right: 0;
                 font-size: 1.2rem;
             }
+
             .nav-buttons,
             .auth-buttons {
                 gap: 0.5rem;
             }
+
             .btn span {
                 display: none;
             }
+
             .btn i {
                 margin-right: 0;
             }
+
             .auth-buttons {
                 gap: 0.5rem;
             }
+
             .btn {
                 padding: 0.5rem 0.8rem;
                 font-size: 0.85rem;
             }
+
             .profile-image,
             .profile-circle {
                 width: 40px;
                 height: 40px;
                 font-size: 1rem;
             }
+
             .brand-text {
-                /* display: none; */ /* Можно скрыть, если логотип не помещается */
+                /* display: none; */
+                /* Можно скрыть, если логотип не помещается */
             }
+
             .brand-icon {
                 margin-right: 0;
             }
+
             .nav-actions {
                 margin-left: auto;
             }
@@ -474,23 +506,28 @@
             .brand-text {
                 display: none;
             }
+
             .brand-icon {
                 margin-right: 0;
             }
+
             .nav-actions {
                 margin-left: auto;
             }
+
             .nav-buttons,
             .auth-buttons {
                 gap: 0.4rem;
             }
+
             .btn {
                 padding: 0.4rem 0.6rem;
                 font-size: 0.8rem;
             }
+
             .nav-link {
-                 padding: 0.4rem;
-             }
+                padding: 0.4rem;
+            }
         }
 
         /* Анимации */
@@ -499,14 +536,15 @@
                 opacity: 0;
                 transform: translateY(-20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-
     </style>
 </head>
+
 <body>
     <header class="site-header" role="banner">
         <nav class="navbar" role="navigation" aria-label="Основная навигация">
@@ -523,10 +561,12 @@
                     <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">
                         <i class="fas fa-home" aria-hidden="true"></i> <span>Главная</span>
                     </a>
-                    <a href="{{ route('posts') }}" class="nav-link {{ request()->routeIs('posts') && !request()->routeIs('posts.top') ? 'active' : '' }}">
+                    <a href="{{ route('posts') }}"
+                        class="nav-link {{ request()->routeIs('posts') && !request()->routeIs('posts.top') ? 'active' : '' }}">
                         <i class="fas fa-book-reader" aria-hidden="true"></i> <span>Посты</span>
                     </a>
-                    <a href="{{ route('posts.top') }}" class="nav-link {{ request()->routeIs('posts.top') ? 'active' : '' }}">
+                    <a href="{{ route('posts.top') }}"
+                        class="nav-link {{ request()->routeIs('posts.top') ? 'active' : '' }}">
                         <i class="fas fa-fire" aria-hidden="true"></i> <span>Топ постов</span>
                     </a>
                 </div>
@@ -540,32 +580,31 @@
                             </a>
                             <!-- Круглая кнопка профиля -->
                             <div class="profile-dropdown" data-dropdown>
-                                <button class="profile-trigger" aria-haspopup="true" aria-expanded="false" aria-label="Меню профиля">
-                                @if(auth()->user()->avatar_url)
-                                    <!-- Отображаем загруженную аватарку -->
-                                    <img src="{{ auth()->user()->avatar_url }}" 
-                                         alt="{{ auth()->user()->name }}" 
-                                         class="profile-image">
-                                @else
-                                    <!-- Отображаем иконку по умолчанию -->
-                                    <div class="profile-circle">
-                                        <i class="fas fa-user" aria-hidden="true"></i>
-                                    </div>
-                                @endif
-                            </button>
-                                <div class="profile-menu" role="menu">
-                                    <div class="profile-header">
-                                        @if(auth()->user()->avatar_url)
+                                <button class="profile-trigger" aria-haspopup="true" aria-expanded="false"
+                                    aria-label="Меню профиля">
+                                    @if(auth()->user()->avatar_url)
                                         <!-- Отображаем загруженную аватарку -->
-                                        <img src="{{ auth()->user()->avatar_url }}" 
-                                             alt="{{ auth()->user()->name }}" 
-                                             class="profile-avatar-img-menu">
+                                        <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}"
+                                            class="profile-image">
                                     @else
                                         <!-- Отображаем иконку по умолчанию -->
-                                        <div class="profile-avatar-circle">
+                                        <div class="profile-circle">
                                             <i class="fas fa-user" aria-hidden="true"></i>
                                         </div>
                                     @endif
+                                </button>
+                                <div class="profile-menu" role="menu">
+                                    <div class="profile-header">
+                                        @if(auth()->user()->avatar_url)
+                                            <!-- Отображаем загруженную аватарку -->
+                                            <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}"
+                                                class="profile-avatar-img-menu">
+                                        @else
+                                            <!-- Отображаем иконку по умолчанию -->
+                                            <div class="profile-avatar-circle">
+                                                <i class="fas fa-user" aria-hidden="true"></i>
+                                            </div>
+                                        @endif
                                         <div class="profile-info">
                                             <div class="profile-username">{{ auth()->user()->name }}</div>
                                             <div class="profile-email">{{ auth()->user()->email }}</div>
@@ -587,10 +626,11 @@
                                         </li>
                                         <li class="profile-menu-item">
                                             <a href="{{ route('logout') }}" class="profile-item logout-item" role="menuitem"
-                                               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                                 <i class="fas fa-sign-out-alt" aria-hidden="true"></i> Выйти
                                             </a>
-                                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                            <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                                style="display: none;">
                                                 @csrf
                                             </form>
                                         </li>
@@ -650,16 +690,16 @@
                     }
                 });
 
-                 // Закрытие меню при потере фокуса (если фокус ушел за пределы меню)
-                 dropdown.addEventListener('focusout', function(e) {
-                     // Проверяем, находится ли новый элемент фокуса внутри этого дропдауна
-                     // setTimeout нужен, чтобы событие focusout успело отработать
-                     setTimeout(() => {
-                         if (!dropdown.contains(document.activeElement)) {
-                             closeMenu();
-                         }
-                     }, 1);
-                 });
+                // Закрытие меню при потере фокуса (если фокус ушел за пределы меню)
+                dropdown.addEventListener('focusout', function (e) {
+                    // Проверяем, находится ли новый элемент фокуса внутри этого дропдауна
+                    // setTimeout нужен, чтобы событие focusout успело отработать
+                    setTimeout(() => {
+                        if (!dropdown.contains(document.activeElement)) {
+                            closeMenu();
+                        }
+                    }, 1);
+                });
             });
 
             // Функция для закрытия всех открытых меню
@@ -679,4 +719,5 @@
         });
     </script>
 </body>
+
 </html>
